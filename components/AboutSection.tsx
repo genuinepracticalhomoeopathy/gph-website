@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Image from 'next/image';
 const AboutSection: React.FC = () => {
     return (
         <section id="about" className="py-20 bg-gray-50 text-black">
@@ -9,7 +9,7 @@ const AboutSection: React.FC = () => {
                 </h2>
                 <div className="flex flex-col md:flex-row items-center gap-10">
                     <div className="md:w-1/2">
-                        <img
+                        <Image
                             src="/tutor.png"
                             alt="Dr. Santosh Mahanwar"
                             className="rounded-lg shadow-lg w-full object-cover aspect-[3/5]"

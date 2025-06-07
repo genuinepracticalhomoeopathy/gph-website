@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { notFound } from 'next/navigation';
-import { FC } from 'react';
+import Image from 'next/image';
 
 interface BlogPost {
   id: string;
@@ -12,21 +12,20 @@ interface BlogPost {
   publishedAt: string;
 }
 
-interface BlogPageProps {
-  params: {
-    id: string;
-  };
-}
-
-const getBlogPost = async (id: string): Promise<BlogPost | null> => {
+async function getBlogPost(id: string): Promise<BlogPost | null> {
   const filePath = path.join(process.cwd(), 'data', 'blogs.json');
   const data = await fs.readFile(filePath, 'utf8');
   const blogs = JSON.parse(data);
   return blogs.find((blog: BlogPost) => blog.id === id) || null;
-};
+}
 
-const BlogPage: FC<BlogPageProps> = async ({ params }) => {
-  const blog = await getBlogPost(params.id);
+export default async function BlogPage({
+  params,
+}: {
+  params: Promise<{ id: string }>; // Changed from { id: string } to Promise<{ id: string }>
+}) {
+  const { id } = await params; // Destructure id after awaiting params
+  const blog = await getBlogPost(id);
 
   if (!blog) {
     notFound();
@@ -37,7 +36,7 @@ const BlogPage: FC<BlogPageProps> = async ({ params }) => {
       <main className="container mx-auto px-4 py-12">
         <article className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="relative h-96">
-            <img
+            <Image
               src={blog.image}
               alt={blog.title}
               className="w-full h-full object-cover"
@@ -67,18 +66,14 @@ const BlogPage: FC<BlogPageProps> = async ({ params }) => {
               {new Date(blog.publishedAt).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
-                day: 'numeric'
+                day: 'numeric',
               })}
             </time>
 
-            <div className="prose prose-lg max-w-none">
-              {blog.content}
-            </div>
+            <div className="prose prose-lg max-w-none">{blog.content}</div>
           </div>
         </article>
       </main>
     </div>
   );
-};
-
-export default BlogPage;
+}

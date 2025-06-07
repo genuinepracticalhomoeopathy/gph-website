@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Header from '../../../components/Header';
+import Image from 'next/image';
 
 const CoursePage = () => {
     const problems = [
@@ -130,7 +131,7 @@ const CoursePage = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div className="relative">
                             <div className="absolute inset-0 bg-[#179E25] rounded-3xl transform rotate-3 opacity-10"></div>
-                            <img
+                            <Image
                                 src="/student.png"
                                 alt="Genuine Practical Homoeopathy Student"
                                 className="relative rounded-3xl shadow-2xl w-full object-cover h-[600px]"
@@ -167,7 +168,7 @@ const CoursePage = () => {
                             <div key={index} className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
                                 <Link href={course.videoUrl}>
                                     <div className="relative group cursor-pointer">
-                                        <img
+                                        <Image
                                             src={course.image}
                                             alt={course.title}
                                             className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"

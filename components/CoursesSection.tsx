@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface CourseProps {
     title: string;
@@ -22,7 +23,7 @@ const CourseCard: React.FC<CourseProps> = ({ title, description, duration, price
         >
             <Link href={`/courses/`} className="flex flex-col h-full">
                 <div className="relative overflow-hidden">
-                    <img
+                    <Image
                         src={image || "/image.png"}
                         alt={title}
                         className={`w-full h-64 object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}

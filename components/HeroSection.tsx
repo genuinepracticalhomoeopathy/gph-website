@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import React from 'react';
 
 const HeroSection: React.FC = () => {
@@ -39,7 +40,7 @@ YOU WERE MEANT TO BE!
           
           <div className="md:w-1/2 relative">
             <div className="rounded-3xl overflow-hidden relative">
-              <img 
+              <Image 
                 src="/image.png" 
                 alt="Genuine Practical Homoeopathy" 
                 className="w-full h-[500px] rounded-3xl object-cover m-5"

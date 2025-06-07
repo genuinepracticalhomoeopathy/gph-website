@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -43,7 +44,7 @@ const Header: React.FC = () => {
     <header className="bg-white py-6 sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold text-[#179E25]">
-          <img className='w-[50%] m-0 h-[10] bg-cover' src="/logo.png" alt="Genuine Practical Homoeopathy" />
+          <Image className='w-[50%] m-0 h-[10] bg-cover' src="/logo.png" alt="Genuine Practical Homoeopathy" />
         </Link>
         
         {/* Desktop Navigation */}

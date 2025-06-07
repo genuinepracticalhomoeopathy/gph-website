@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import Link from 'next/link';
+import Image from 'next/image';
 // import Header from '@/components/Header';
 
 interface BlogPost {
@@ -37,7 +38,7 @@ export default async function BlogsPage() {
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
               <div className="relative h-48 overflow-hidden">
-                <img
+                <Image
                   src={blog.image}
                   alt={blog.title}
                   className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
