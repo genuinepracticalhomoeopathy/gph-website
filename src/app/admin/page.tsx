@@ -44,7 +44,6 @@ export default function AdminPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate image URL
     const imageUrlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i;
     if (!imageUrlPattern.test(blogPost.image)) {
       setMessage('Please enter a direct image URL (ending with .jpg, .jpeg, .png, .webp, or .gif).');
@@ -67,16 +66,11 @@ export default function AdminPage() {
 
       if (response.ok) {
         setMessage('Blog post created successfully!');
-        setBlogPost({
-          title: '',
-          content: '',
-          image: '',
-          tags: ''
-        });
+        setBlogPost({ title: '', content: '', image: '', tags: '' });
       } else {
         setMessage('Failed to create blog post');
       }
-    } catch (error) {
+    } catch (_error) {
       setMessage('Error creating blog post');
     }
   };

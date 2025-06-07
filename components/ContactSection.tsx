@@ -21,7 +21,6 @@ const ContactSection = () => {
     setStatus({ loading: true, success: false, error: '' });
 
     try {
-      // You can replace this with your actual API endpoint
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -35,8 +34,8 @@ const ContactSection = () => {
       }
 
       setStatus({ loading: false, success: true, error: '' });
-      setFormData({ name: '', email: '', phone: '', message: '' }); // Reset form
-    } catch (error) {
+      setFormData({ name: '', email: '', phone: '', message: '' });
+    } catch (_error) {
       setStatus({
         loading: false,
         success: false,
@@ -59,7 +58,7 @@ const ContactSection = () => {
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">Get in Touch</h2>
           <p className="text-slate-600">
-            Have questions about our courses? We're here to help you on your journey to becoming a successful homeopathy practitioner.
+            Have questions about our courses? We&apos;re here to help you on your journey to becoming a successful homeopathy practitioner.
           </p>
         </div>
 
@@ -68,7 +67,7 @@ const ContactSection = () => {
             <div className="text-center py-8">
               <div className="text-green-500 text-5xl mb-4">✓</div>
               <h3 className="text-2xl font-bold mb-2">Thank You!</h3>
-              <p className="text-slate-600">Your message has been sent successfully. We'll get back to you soon.</p>
+              <p className="text-slate-600">Your message has been sent successfully. We&apos;ll get back to you soon.</p>
               <button
                 onClick={() => setStatus({ loading: false, success: false, error: '' })}
                 className="mt-6 bg-primary text-white font-semibold py-2 px-6 rounded-md hover:bg-primary/90 transition-colors"
