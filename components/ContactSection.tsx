@@ -35,7 +35,7 @@ const ContactSection = () => {
 
       setStatus({ loading: false, success: true, error: '' });
       setFormData({ name: '', email: '', phone: '', message: '' });
-    } catch (_error) {
+    } catch {
       setStatus({
         loading: false,
         success: false,

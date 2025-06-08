@@ -23,7 +23,9 @@ const CourseCard: React.FC<CourseProps> = ({ title, description, duration, price
         >
             <Link href={`https://kxgep.courses.store/`} className="flex flex-col h-full">
                 <div className="relative overflow-hidden">
-                    <img
+                    <Image
+                        width={100}
+                        height={100}
                         src={image || "/image.png"}
                         alt={title}
                         className={`w-full h-64 object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
@@ -48,7 +50,7 @@ const CourseCard: React.FC<CourseProps> = ({ title, description, duration, price
                             <span className="text-sm text-gray-600 ml-2 font-medium">(120)</span>
                         </div>
                         <button className="bg-[#179E25] hover:bg-[#179E25]/90 text-white py-2.5 px-6 rounded-full transition-colors text-sm font-semibold shadow-md hover:shadow-lg">
-                            {/* <a href='https://kxgep.courses.store/'>Enroll now</a> */}
+                            Enroll Now
                         </button>
                     </div>
                 </div>
@@ -92,19 +94,17 @@ Transform your practice with proven methods`,
         {
             title: "Acute Management System",
             description: "Gain the confidence and skills to manage acute cases effectively with this focused course designed for Homoeopathic practitioners, students, and beginners. Learn a structured, step-by-step approach to acute case-taking, remedy selection using a simplified seven-step protocol, and overcome common doubts in acute prescribing. Dive deep into core remedies like Aconite, Belladonna, Nux Vomica, and specialized remedies for acute psychotic episodes. With proven methodologies and practical tools, this course equips you to deliver consistent, impactful results in acute care.",
-            duration: "8 weeksg",
+            duration: "8 weeks",
             price: "₹6,999",
             image: "/image.png",
         },
         {
             title: "GPH Advanced Course",
-            description: "Unlock the full potential of Hahnemannian Homoeopathy with this advanced course, tailored for students, interns, PG scholars, MDs, and experienced practitioners. Strengthen your foundation, clear doubts, and shift toward a scientific, result-oriented mindset. Learn to apply principles effectively in daily practice, master case selection, and understand why remedies work or fail. Join a supportive community, access a proven system, and accelerate your growth—both professionally and financially—through our “Educate, Engage, and Earn” approach.",
+            description: "Unlock the full potential of Hahnemannian Homoeopathy with this advanced course, tailored for students, interns, PG scholars, MDs, and experienced practitioners. Strengthen your foundation, clear doubts, and shift toward a scientific, result-oriented mindset. Learn to apply principles effectively in daily practice, master case selection, and understand why remedies work or fail. Join a supportive community, access a proven system, and accelerate your growth—both professionally and financially—through our Educate, Engage, and Earn approach.",
             duration: "12 weeks",
             price: "₹24,999",
             image: "/image.png",
         },
-        
-       
     ];
 
     return (

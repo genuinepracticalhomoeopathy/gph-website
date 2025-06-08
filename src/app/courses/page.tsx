@@ -103,8 +103,8 @@ const CoursePage = () => {
                 "Understanding the importance of a healthy lifestyle",
 
             ],
-            image: "/courseImg3.png",
-            tag: "Begineer Level",
+            image: "/courseImg4.png",
+            tag: "Beginner Level",
             videoUrl: "https://kxgep.courses.store/230968?utm_source%3Dother%26utm_medium%3Dtutor-course-referral%26utm_campaign%3Dcourse-overview-webapp",
             slug: "begineer-gph"
         },
@@ -132,6 +132,8 @@ const CoursePage = () => {
                         <div className="relative">
                             <div className="absolute inset-0 bg-[#179E25] rounded-3xl transform rotate-3 opacity-10"></div>
                             <Image
+                                width={1000}
+                                height={1000}
                                 src="/student.png"
                                 alt="Genuine Practical Homoeopathy Student"
                                 className="relative rounded-3xl shadow-2xl w-full object-cover h-[600px]"
@@ -169,6 +171,8 @@ const CoursePage = () => {
                                 <Link href={course.videoUrl}>
                                     <div className="relative group cursor-pointer">
                                         <Image
+                                            width={1000}
+                                            height={1000}
                                             src={course.image}
                                             alt={course.title}
                                             className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"

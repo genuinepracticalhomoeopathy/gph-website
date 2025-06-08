@@ -40,7 +40,9 @@ YOU WERE MEANT TO BE!
           
           <div className="md:w-1/2 relative">
             <div className="rounded-3xl overflow-hidden relative">
-              <img 
+              <Image
+                width={500}
+                height={500}
                 src="/image.png" 
                 alt="Genuine Practical Homoeopathy" 
                 className="w-full h-[500px] rounded-3xl object-cover m-5"

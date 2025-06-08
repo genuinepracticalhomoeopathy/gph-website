@@ -70,7 +70,7 @@ export default function AdminPage() {
       } else {
         setMessage('Failed to create blog post');
       }
-    } catch (_error) {
+    } catch {
       setMessage('Error creating blog post');
     }
   };
