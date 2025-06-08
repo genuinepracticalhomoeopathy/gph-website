@@ -44,7 +44,13 @@ const Header: React.FC = () => {
     <header className="bg-white py-6 sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold text-[#179E25]">
-          <Image width={400} height={400} className='w-[50%] m-0 h-[10] bg-cover' src="/logo.png" alt="Genuine Practical Homoeopathy" />
+          <Image 
+            width={200} 
+            height={80} 
+            className='w-[50%] h-auto bg-cover' 
+            src="/logo.png" 
+            alt="Genuine Practical Homoeopathy" 
+          />
         </Link>
         
         {/* Desktop Navigation */}
