@@ -21,9 +21,9 @@ const CourseCard: React.FC<CourseProps> = ({ title, description, duration, price
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <Link href={`/courses/`} className="flex flex-col h-full">
+            <Link href={`https://kxgep.courses.store/`} className="flex flex-col h-full">
                 <div className="relative overflow-hidden">
-                    <Image
+                    <img
                         src={image || "/image.png"}
                         alt={title}
                         className={`w-full h-64 object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
@@ -48,7 +48,7 @@ const CourseCard: React.FC<CourseProps> = ({ title, description, duration, price
                             <span className="text-sm text-gray-600 ml-2 font-medium">(120)</span>
                         </div>
                         <button className="bg-[#179E25] hover:bg-[#179E25]/90 text-white py-2.5 px-6 rounded-full transition-colors text-sm font-semibold shadow-md hover:shadow-lg">
-                            <a href='https://kxgep.courses.store/'>Enroll now</a>
+                            {/* <a href='https://kxgep.courses.store/'>Enroll now</a> */}
                         </button>
                     </div>
                 </div>

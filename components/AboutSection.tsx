@@ -10,6 +10,8 @@ const AboutSection: React.FC = () => {
                 <div className="flex flex-col md:flex-row items-center gap-10">
                     <div className="md:w-1/2">
                         <Image
+                            width={1000}
+                            height={1000}
                             src="/tutor.png"
                             alt="Dr. Santosh Mahanwar"
                             className="rounded-lg shadow-lg w-full object-cover aspect-[3/5]"
