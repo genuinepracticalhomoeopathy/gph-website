@@ -8,7 +8,10 @@ interface Blog {
   publishedAt?: string;
   title: string;
   content: string;
-  [key: string]: any; // Allow for additional properties
+  author?: string;
+  tags?: string[];
+  excerpt?: string;
+  [key: string]: unknown; // Allow for additional properties
 }
 
 const BLOGS_FILE = path.join(process.cwd(), 'data', 'blogs.json');

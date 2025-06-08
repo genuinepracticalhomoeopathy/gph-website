@@ -9,7 +9,9 @@ interface ContactSubmission {
   name: string;
   email: string;
   message: string;
-  [key: string]: any; // Allow for additional form fields
+  subject?: string;
+  phone?: string;
+  [key: string]: unknown; // Allow for additional form fields
 }
 
 const SUBMISSIONS_FILE = path.join(process.cwd(), 'data', 'contact-submissions.json');
