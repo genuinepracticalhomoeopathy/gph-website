@@ -2,6 +2,15 @@ import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 
+// Define a proper type for blog objects
+interface Blog {
+  id?: string;
+  publishedAt?: string;
+  title: string;
+  content: string;
+  [key: string]: any; // Allow for additional properties
+}
+
 const BLOGS_FILE = path.join(process.cwd(), 'data', 'blogs.json');
 
 async function ensureDirectoryExists() {
@@ -13,27 +22,28 @@ async function ensureDirectoryExists() {
   }
 }
 
-async function readBlogs() {
+async function readBlogs(): Promise<Blog[]> {
   try {
     await ensureDirectoryExists();
     const data = await fs.readFile(BLOGS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
+    return JSON.parse(data) as Blog[];
+  } catch {
+    // Removed unused 'error' parameter
     return [];
   }
 }
 
-async function writeBlogs(blogs: any[]) {
+async function writeBlogs(blogs: Blog[]): Promise<void> {
   await ensureDirectoryExists();
   await fs.writeFile(BLOGS_FILE, JSON.stringify(blogs, null, 2));
 }
 
 export async function POST(request: Request) {
   try {
-    const blog = await request.json();
+    const blog = await request.json() as Blog;
 
     // Add id and published date
-    const blogToSave = {
+    const blogToSave: Blog = {
       ...blog,
       id: Date.now().toString(),
       publishedAt: new Date().toISOString()

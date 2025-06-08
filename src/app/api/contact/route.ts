@@ -2,6 +2,16 @@ import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 
+// Define a proper type for contact submissions
+interface ContactSubmission {
+  id?: string;
+  timestamp?: string;
+  name: string;
+  email: string;
+  message: string;
+  [key: string]: any; // Allow for additional form fields
+}
+
 const SUBMISSIONS_FILE = path.join(process.cwd(), 'data', 'contact-submissions.json');
 
 async function ensureDirectoryExists() {
@@ -13,27 +23,28 @@ async function ensureDirectoryExists() {
   }
 }
 
-async function readSubmissions() {
+async function readSubmissions(): Promise<ContactSubmission[]> {
   try {
     await ensureDirectoryExists();
     const data = await fs.readFile(SUBMISSIONS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
+    return JSON.parse(data) as ContactSubmission[];
+  } catch {
+    // Removed unused 'error' parameter
     return [];
   }
 }
 
-async function writeSubmissions(submissions: any[]) {
+async function writeSubmissions(submissions: ContactSubmission[]): Promise<void> {
   await ensureDirectoryExists();
   await fs.writeFile(SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
 }
 
 export async function POST(request: Request) {
   try {
-    const data = await request.json();
+    const data = await request.json() as ContactSubmission;
     
     // Add timestamp to the submission
-    const submission = {
+    const submission: ContactSubmission = {
       ...data,
       timestamp: new Date().toISOString(),
       id: Date.now().toString()
