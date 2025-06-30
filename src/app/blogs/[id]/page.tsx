@@ -32,7 +32,7 @@ export default async function BlogPage({
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="container mx-auto px-4 py-12">
-        <article className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        <article className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden text-black">
           <div className="p-8">
             <div className="flex flex-wrap gap-2 mb-6">
               {blog.tags.map((tag) => (
@@ -45,7 +45,7 @@ export default async function BlogPage({
               ))}
             </div>
 
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-bold text-black mb-4">
               {blog.title}
             </h1>
 
@@ -60,7 +60,7 @@ export default async function BlogPage({
               })}
             </time>
 
-            <div className="prose prose-lg max-w-none">{blog.content}</div>
+            <div className="prose prose-lg max-w-none text-black">{blog.content}</div>
           </div>
         </article>
       </main>
