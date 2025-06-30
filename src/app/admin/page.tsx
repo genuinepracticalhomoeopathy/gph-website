@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 interface BlogPost {
   title: string;
   content: string;
-  image: string;
   tags: string;
 }
 
@@ -15,7 +14,6 @@ export default function AdminPage() {
   const [blogPost, setBlogPost] = useState<BlogPost>({
     title: '',
     content: '',
-    image: '',
     tags: ''
   });
   const [message, setMessage] = useState('');
@@ -43,13 +41,6 @@ export default function AdminPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const imageUrlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i;
-    if (!imageUrlPattern.test(blogPost.image)) {
-      setMessage('Please enter a direct image URL (ending with .jpg, .jpeg, .png, .webp, or .gif).');
-      return;
-    }
-
     try {
       const response = await fetch('/api/blogs', {
         method: 'POST',
@@ -63,10 +54,9 @@ export default function AdminPage() {
           publishedAt: new Date().toISOString()
         }),
       });
-
       if (response.ok) {
         setMessage('Blog post created successfully!');
-        setBlogPost({ title: '', content: '', image: '', tags: '' });
+        setBlogPost({ title: '', content: '', tags: '' });
       } else {
         setMessage('Failed to create blog post');
       }
@@ -117,19 +107,6 @@ export default function AdminPage() {
                 required
                 rows={6}
                 value={blogPost.content}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-black"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="image" className="block text-sm font-medium text-black">Image URL</label>
-              <input
-                type="url"
-                id="image"
-                name="image"
-                required
-                value={blogPost.image}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-black"
               />

@@ -1,13 +1,11 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 
 interface BlogPost {
   id: string;
   title: string;
   content: string;
-  image: string;
   tags: string[];
   publishedAt: string;
 }
@@ -35,14 +33,6 @@ export default async function BlogPage({
     <div className="min-h-screen bg-gray-50">
       <main className="container mx-auto px-4 py-12">
         <article className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="relative h-96">
-            <Image
-              src={blog.image}
-              alt={blog.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
           <div className="p-8">
             <div className="flex flex-wrap gap-2 mb-6">
               {blog.tags.map((tag) => (
