@@ -37,10 +37,10 @@ export default async function BlogsPage() {
             >
               <div className="p-6">
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {blog.tags.map((tag) => (
+                  {blog.tags.slice(0, 5).map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full"
+                      className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full"
                     >
                       {tag}
                     </span>
