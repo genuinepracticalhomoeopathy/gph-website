@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, orderBy, query, Timestamp } from 'firebase/firestore';
 
 // Define a proper type for blog objects
 interface Blog {
@@ -14,54 +14,45 @@ interface Blog {
   [key: string]: unknown; // Allow for additional properties
 }
 
-const BLOGS_FILE = path.join(process.cwd(), 'data', 'blogs.json');
+// Middleware to verify admin authentication
+function verifyAdminAuth(request: NextRequest) {
+  const isAuthenticated = request.cookies.get('admin-authenticated')?.value === 'true';
+  const email = request.cookies.get('admin-email')?.value;
 
-async function ensureDirectoryExists() {
-  const dir = path.dirname(BLOGS_FILE);
-  try {
-    await fs.access(dir);
-  } catch {
-    await fs.mkdir(dir, { recursive: true });
+  if (!isAuthenticated || !email) {
+    return null;
   }
+
+  return { email, role: 'admin' };
 }
 
-async function readBlogs(): Promise<Blog[]> {
+export async function POST(request: NextRequest) {
   try {
-    await ensureDirectoryExists();
-    const data = await fs.readFile(BLOGS_FILE, 'utf8');
-    return JSON.parse(data) as Blog[];
-  } catch {
-    // Removed unused 'error' parameter
-    return [];
-  }
-}
+    // Verify admin authentication
+    const user = verifyAdminAuth(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
 
-async function writeBlogs(blogs: Blog[]): Promise<void> {
-  await ensureDirectoryExists();
-  await fs.writeFile(BLOGS_FILE, JSON.stringify(blogs, null, 2));
-}
-
-export async function POST(request: Request) {
-  try {
     const blog = await request.json() as Blog;
 
-    // Add id and published date
+    // Create blog document with auto-generated ID
     const blogToSave: Blog = {
       ...blog,
-      id: Date.now().toString(),
-      publishedAt: new Date().toISOString()
+      publishedAt: new Date().toISOString(),
+      author: user.email
     };
 
-    // Read existing blogs
-    const blogs = await readBlogs();
+    // Save to Firestore
+    const docRef = await addDoc(collection(db, 'blogs'), blogToSave);
 
-    // Add new blog
-    blogs.push(blogToSave);
-
-    // Write back to file
-    await writeBlogs(blogs);
-
-    return NextResponse.json({ message: 'Blog post created successfully', blog: blogToSave });
+    return NextResponse.json({
+      message: 'Blog post created successfully',
+      blog: { ...blogToSave, id: docRef.id }
+    });
   } catch (error) {
     console.error('Blog creation error:', error);
     return NextResponse.json(
@@ -73,12 +64,99 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const blogs = await readBlogs();
+    // Get all blogs from Firestore
+    const blogsQuery = query(collection(db, 'blogs'), orderBy('publishedAt', 'desc'));
+    const blogsSnapshot = await getDocs(blogsQuery);
+
+    const blogs = blogsSnapshot.docs.map((doc: any) => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
     return NextResponse.json(blogs);
   } catch (error) {
     console.error('Error reading blogs:', error);
     return NextResponse.json(
       { error: 'Failed to fetch blogs' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    // Verify admin authentication
+    const user = verifyAdminAuth(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { id, ...blogData } = await request.json() as Blog & { id: string };
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Blog ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Update blog in Firestore
+    const blogRef = doc(db, 'blogs', id);
+    const updatedBlog = {
+      ...blogData,
+      updatedAt: new Date().toISOString()
+    };
+
+    await updateDoc(blogRef, updatedBlog);
+
+    return NextResponse.json({
+      message: 'Blog post updated successfully',
+      blog: { ...updatedBlog, id }
+    });
+  } catch (error) {
+    console.error('Blog update error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update blog post' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    // Verify admin authentication
+    const user = verifyAdminAuth(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Blog ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Delete blog from Firestore
+    const blogRef = doc(db, 'blogs', id);
+    await deleteDoc(blogRef);
+
+    return NextResponse.json({
+      message: 'Blog post deleted successfully'
+    });
+  } catch (error) {
+    console.error('Blog deletion error:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete blog post' },
       { status: 500 }
     );
   }

@@ -9,8 +9,8 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Check for authentication
-    const isAuthenticated = request.cookies.get('adminAuthenticated')?.value === 'true';
+    // Check for Firebase authentication cookies
+    const isAuthenticated = request.cookies.get('admin-authenticated')?.value === 'true';
 
     if (!isAuthenticated) {
       // Redirect to login if not authenticated

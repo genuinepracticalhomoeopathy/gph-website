@@ -23,11 +23,11 @@ export default function BlogsPage() {
         const response = await fetch('/api/blogs', {
           cache: 'no-store'
         });
-
+        
         if (!response.ok) {
           throw new Error('Failed to fetch blogs');
         }
-
+        
         const data = await response.json();
         setBlogs(data);
       } catch (error) {
@@ -40,13 +40,12 @@ export default function BlogsPage() {
 
     fetchBlogs();
   }, []);
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading blogs...</p>
+      <div className=\"min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center\">
+        <div className=\"text-center\">
+          <div className=\"w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4\"></div>
+          <p className=\"text-gray-600\">Loading blogs...</p>
         </div>
       </div>
     );
@@ -54,14 +53,14 @@ export default function BlogsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
-            <h3 className="text-red-800 font-semibold mb-2">Error Loading Blogs</h3>
-            <p className="text-red-600">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+      <div className=\"min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center\">
+        <div className=\"text-center\">
+          <div className=\"bg-red-50 border border-red-200 rounded-lg p-6 max-w-md\">
+            <h3 className=\"text-red-800 font-semibold mb-2\">Error Loading Blogs</h3>
+            <p className=\"text-red-600\">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className=\"mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700\"
             >
               Try Again
             </button>
@@ -108,13 +107,14 @@ export default function BlogsPage() {
                 <span className="font-semibold text-green-600">{blogs.length}</span> article{blogs.length !== 1 ? 's' : ''} published
               </p>
             </div>
-
+            
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
               {blogs.map((blog, index) => (
                 <article
                   key={blog.id}
-                  className={`group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-green-200 hover:-translate-y-1 ${index === 0 ? 'md:col-span-2 xl:col-span-1' : ''
-                    }`}
+                  className={`group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-green-200 hover:-translate-y-1 ${
+                    index === 0 ? 'md:col-span-2 xl:col-span-1' : ''
+                  }`}
                 >
                   <div className="p-8">
                     {/* Tags */}

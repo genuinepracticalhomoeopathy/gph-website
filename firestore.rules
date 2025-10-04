@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read access to blogs for everyone
+    match /blogs/{document} {
+      allow read: if true;
+      allow write: if false; // Only server-side operations allowed
+    }
+  }
+}
