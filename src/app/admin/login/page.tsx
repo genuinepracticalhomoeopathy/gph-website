@@ -38,6 +38,8 @@ export default function AdminLogin() {
       });
 
       if (response.ok) {
+        // Wait a moment for cookies to be set
+        await new Promise(resolve => setTimeout(resolve, 500));
         router.push('/admin');
       } else {
         const data = await response.json();

@@ -40,19 +40,21 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-    response.cookies.set('admin-authenticated', 'true', {
+    // Production-friendly cookie settings
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 // 24 hours
-    });
+      secure: isProduction,
+      sameSite: isProduction ? 'none' as const : 'strict' as const, // 'none' for cross-site in production
+      maxAge: 24 * 60 * 60, // 24 hours
+      path: '/', // Ensure cookies are available site-wide
+      ...(isProduction && {
+        domain: process.env.VERCEL_URL ? `.${process.env.VERCEL_URL}` : undefined
+      })
+    };
 
-    response.cookies.set('admin-email', email, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 // 24 hours
-    });
+    response.cookies.set('admin-authenticated', 'true', cookieOptions);
+    response.cookies.set('admin-email', email, cookieOptions);
 
     return response;
   } catch (error) {
