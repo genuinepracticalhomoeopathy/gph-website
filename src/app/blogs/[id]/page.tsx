@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 interface BlogPost {
@@ -20,12 +19,6 @@ export default function BlogPage() {
   const [error, setError] = useState<string | null>(null);
   const params = useParams();
   const id = params.id as string;
-
-  useEffect(() => {
-    if (id) {
-      fetchBlog();
-    }
-  }, [id]);
 
   const renderContent = (content: string) => {
     return content
@@ -45,7 +38,7 @@ export default function BlogPage() {
       .replace(/\n/g, '<br>');
   };
 
-  const fetchBlog = async () => {
+  const fetchBlog = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -69,7 +62,13 @@ export default function BlogPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchBlog();
+    }
+  }, [id, fetchBlog]);
 
   if (loading) {
     return (

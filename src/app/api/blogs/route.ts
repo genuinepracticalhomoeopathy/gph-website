@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, orderBy, query, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, orderBy, query } from 'firebase/firestore';
 
 // Define a proper type for blog objects
 interface Blog {
@@ -68,10 +68,10 @@ export async function GET() {
     const blogsQuery = query(collection(db, 'blogs'), orderBy('publishedAt', 'desc'));
     const blogsSnapshot = await getDocs(blogsQuery);
 
-    const blogs = blogsSnapshot.docs.map((doc: any) => ({
+    const blogs = blogsSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data()
-    }));
+    } as Blog));
 
     return NextResponse.json(blogs);
   } catch (error) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface BlogPost {
@@ -36,9 +36,10 @@ export default function AdminPage() {
   useEffect(() => {
     checkAuth();
     fetchBlogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/verify');
       if (response.ok) {
@@ -57,9 +58,9 @@ export default function AdminPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router]);
 
-  const fetchBlogs = async () => {
+  const fetchBlogs = useCallback(async () => {
     try {
       const response = await fetch('/api/blogs');
       if (response.ok) {
@@ -69,7 +70,7 @@ export default function AdminPage() {
     } catch (error) {
       console.error('Failed to fetch blogs:', error);
     }
-  };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -325,8 +326,8 @@ export default function AdminPage() {
         {/* Success/Error Message */}
         {message && (
           <div className={`mb-6 p-4 rounded-xl border-l-4 ${message.includes('success')
-              ? 'bg-green-50 border-green-500 text-green-700'
-              : 'bg-red-50 border-red-500 text-red-700'
+            ? 'bg-green-50 border-green-500 text-green-700'
+            : 'bg-red-50 border-red-500 text-red-700'
             }`}>
             <div className="flex items-center">
               {message.includes('success') ? (
@@ -386,8 +387,8 @@ export default function AdminPage() {
                         type="button"
                         onClick={() => setPreviewMode(!previewMode)}
                         className={`px-3 py-1 text-xs rounded-lg font-medium transition-colors ${previewMode
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                       >
                         {previewMode ? 'Edit' : 'Preview'}
@@ -419,7 +420,7 @@ export default function AdminPage() {
                         <div className="flex border-r border-gray-300 pr-2 mr-2">
                           <button type="button" onClick={() => formatText('unordered-list')} className="p-2 hover:bg-gray-200 rounded text-gray-700" title="Bullet List">•</button>
                           <button type="button" onClick={() => formatText('ordered-list')} className="p-2 hover:bg-gray-200 rounded text-gray-700" title="Numbered List">1.</button>
-                          <button type="button" onClick={() => formatText('quote')} className="p-2 hover:bg-gray-200 rounded text-gray-700" title="Quote">"</button>
+                          <button type="button" onClick={() => formatText('quote')} className="p-2 hover:bg-gray-200 rounded text-gray-700" title="Quote">&quot;</button>
                           <button type="button" onClick={() => formatText('line')} className="p-2 hover:bg-gray-200 rounded text-gray-700" title="Horizontal Line">—</button>
                         </div>
 

@@ -19,10 +19,8 @@ export async function GET(request: NextRequest) {
         role: 'admin'
       }
     });
-  } catch (error) {
-    return NextResponse.json(
-      { authenticated: false },
-      { status: 401 }
-    );
+  } catch (err) {
+    console.error('Auth verification failed:', err);
+    return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 }
