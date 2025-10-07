@@ -27,24 +27,31 @@ export default function AdminLogin() {
     setError('');
 
     try {
+      // Step 1: Firebase authentication
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
-
+      
+      // Step 2: Set server-side cookies
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Important for cookies in production
         body: JSON.stringify({ email: formData.email }),
       });
 
-      if (response.ok) {
-        // Wait a moment for cookies to be set
-        await new Promise(resolve => setTimeout(resolve, 500));
-        router.push('/admin');
-      } else {
+      if (!response.ok) {
         const data = await response.json();
         setError(data.error || 'Authentication failed');
+        return;
       }
+      
+      // Step 3: Wait for cookies to be set properly
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Step 4: Redirect to admin
+      router.push('/admin');
+      
     } catch (error: unknown) {
       console.error('Login error:', error);
       const firebaseError = error as { code?: string; message?: string };
@@ -54,6 +61,8 @@ export default function AdminLogin() {
         setError('Incorrect password');
       } else if (firebaseError.code === 'auth/invalid-email') {
         setError('Invalid email address');
+      } else if (firebaseError.code === 'auth/invalid-credential') {
+        setError('Invalid email or password');
       } else {
         setError(firebaseError.message || 'Authentication failed');
       }

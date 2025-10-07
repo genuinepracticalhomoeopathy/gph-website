@@ -45,12 +45,9 @@ export async function POST(request: NextRequest) {
     const cookieOptions = {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? 'none' as const : 'strict' as const, // 'none' for cross-site in production
+      sameSite: 'lax' as const, // 'lax' works for both production and development
       maxAge: 24 * 60 * 60, // 24 hours
       path: '/', // Ensure cookies are available site-wide
-      ...(isProduction && {
-        domain: process.env.VERCEL_URL ? `.${process.env.VERCEL_URL}` : undefined
-      })
     };
 
     response.cookies.set('admin-authenticated', 'true', cookieOptions);
