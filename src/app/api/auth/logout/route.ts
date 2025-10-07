@@ -8,7 +8,7 @@ export async function POST() {
     );
 
     const isProduction = process.env.NODE_ENV === 'production';
-    
+
     // Clear admin session cookies with same settings as login
     response.cookies.set('admin-authenticated', '', {
       httpOnly: true,

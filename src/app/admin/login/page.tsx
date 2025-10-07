@@ -29,7 +29,7 @@ export default function AdminLogin() {
     try {
       // Step 1: Firebase authentication
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      
+
       // Step 2: Set server-side cookies
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -45,13 +45,13 @@ export default function AdminLogin() {
         setError(data.error || 'Authentication failed');
         return;
       }
-      
+
       // Step 3: Wait for cookies to be set properly
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       // Step 4: Redirect to admin
       router.push('/admin');
-      
+
     } catch (error: unknown) {
       console.error('Login error:', error);
       const firebaseError = error as { code?: string; message?: string };
