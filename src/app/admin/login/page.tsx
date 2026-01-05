@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 
 export default function AdminLogin() {
   const [formData, setFormData] = useState({
@@ -27,10 +25,7 @@ export default function AdminLogin() {
     setError('');
 
     try {
-      // Step 1: Firebase authentication
-      await signInWithEmailAndPassword(auth, formData.email, formData.password);
-
-      // Step 2: Set server-side cookies
+      // Server-side authentication
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -46,26 +41,15 @@ export default function AdminLogin() {
         return;
       }
 
-      // Step 3: Wait for cookies to be set properly
+      // Wait for cookies to be set properly
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Step 4: Redirect to admin
+      // Redirect to admin
       router.push('/admin');
 
     } catch (error: unknown) {
       console.error('Login error:', error);
-      const firebaseError = error as { code?: string; message?: string };
-      if (firebaseError.code === 'auth/user-not-found') {
-        setError('No account found with this email');
-      } else if (firebaseError.code === 'auth/wrong-password') {
-        setError('Incorrect password');
-      } else if (firebaseError.code === 'auth/invalid-email') {
-        setError('Invalid email address');
-      } else if (firebaseError.code === 'auth/invalid-credential') {
-        setError('Invalid email or password');
-      } else {
-        setError(firebaseError.message || 'Authentication failed');
-      }
+      setError('Authentication failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

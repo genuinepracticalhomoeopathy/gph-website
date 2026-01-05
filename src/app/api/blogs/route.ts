@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, orderBy, query } from 'firebase/firestore';
+import { db, blogs, type NewBlog } from '@/lib/db';
+import { desc, eq } from 'drizzle-orm';
 
-// Define a proper type for blog objects
-interface Blog {
-  id?: string;
-  publishedAt?: string;
+// Define a proper type for blog objects from the frontend
+interface BlogRequest {
   title: string;
   content: string;
-  author?: string;
-  tags?: string[];
   excerpt?: string;
-  [key: string]: unknown; // Allow for additional properties
+  tags?: string | string[];
 }
 
 // Middleware to verify admin authentication
@@ -37,26 +33,56 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const blog = await request.json() as Blog;
+    const blogData = await request.json() as BlogRequest;
 
-    // Create blog document with auto-generated ID
-    const blogToSave: Blog = {
-      ...blog,
-      publishedAt: new Date().toISOString(),
-      author: user.email
+    // Validate required fields
+    if (!blogData.title || !blogData.content) {
+      return NextResponse.json(
+        { error: 'Title and content are required' },
+        { status: 400 }
+      );
+    }
+
+    // Prepare blog data for database
+    const tagsString = Array.isArray(blogData.tags) 
+      ? JSON.stringify(blogData.tags)
+      : typeof blogData.tags === 'string'
+      ? JSON.stringify(blogData.tags.split(',').map(tag => tag.trim()).filter(Boolean))
+      : null;
+
+    const newBlog: NewBlog = {
+      title: blogData.title,
+      content: blogData.content,
+      excerpt: blogData.excerpt || null,
+      author: user.email,
+      tags: tagsString,
     };
 
-    // Save to Firestore
-    const docRef = await addDoc(collection(db, 'blogs'), blogToSave);
+    // Insert into database
+    const result = await db.insert(blogs).values(newBlog).returning();
+    const createdBlog = result[0];
 
     return NextResponse.json({
       message: 'Blog post created successfully',
-      blog: { ...blogToSave, id: docRef.id }
+      blog: {
+        ...createdBlog,
+        tags: createdBlog.tags ? JSON.parse(createdBlog.tags) : []
+      }
     });
   } catch (error) {
     console.error('Blog creation error:', error);
+    
+    if (error instanceof Error) {
+      if (error.message.includes('database') || error.message.includes('connection')) {
+        return NextResponse.json(
+          { error: 'Database connection error. Please check your DATABASE_URL configuration.' },
+          { status: 500 }
+        );
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to create blog post' },
+      { error: 'Failed to create blog post. Check console for details.' },
       { status: 500 }
     );
   }
@@ -64,16 +90,19 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    // Get all blogs from Firestore
-    const blogsQuery = query(collection(db, 'blogs'), orderBy('publishedAt', 'desc'));
-    const blogsSnapshot = await getDocs(blogsQuery);
+    // Get all blogs from database, ordered by publishedAt desc
+    const allBlogs = await db
+      .select()
+      .from(blogs)
+      .orderBy(desc(blogs.publishedAt));
 
-    const blogs = blogsSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data()
-    } as Blog));
+    // Parse tags back to arrays
+    const blogsWithParsedTags = allBlogs.map(blog => ({
+      ...blog,
+      tags: blog.tags ? JSON.parse(blog.tags) : []
+    }));
 
-    return NextResponse.json(blogs);
+    return NextResponse.json(blogsWithParsedTags);
   } catch (error) {
     console.error('Error reading blogs:', error);
     return NextResponse.json(
@@ -94,27 +123,52 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const { id, ...blogData } = await request.json() as Blog & { id: string };
+    const { id, ...blogData } = await request.json() as BlogRequest & { id: string };
 
-    if (!id) {
+    if (!id || !Number.isInteger(Number(id))) {
       return NextResponse.json(
-        { error: 'Blog ID is required' },
+        { error: 'Valid blog ID is required' },
         { status: 400 }
       );
     }
 
-    // Update blog in Firestore
-    const blogRef = doc(db, 'blogs', id);
-    const updatedBlog = {
-      ...blogData,
-      updatedAt: new Date().toISOString()
+    // Prepare updated blog data
+    const tagsString = Array.isArray(blogData.tags) 
+      ? JSON.stringify(blogData.tags)
+      : typeof blogData.tags === 'string'
+      ? JSON.stringify(blogData.tags.split(',').map(tag => tag.trim()).filter(Boolean))
+      : null;
+
+    const updatedData = {
+      title: blogData.title,
+      content: blogData.content,
+      excerpt: blogData.excerpt || null,
+      tags: tagsString,
+      updatedAt: new Date(),
     };
 
-    await updateDoc(blogRef, updatedBlog);
+    // Update blog in database
+    const result = await db
+      .update(blogs)
+      .set(updatedData)
+      .where(eq(blogs.id, Number(id)))
+      .returning();
+
+    if (result.length === 0) {
+      return NextResponse.json(
+        { error: 'Blog post not found' },
+        { status: 404 }
+      );
+    }
+
+    const updatedBlog = result[0];
 
     return NextResponse.json({
       message: 'Blog post updated successfully',
-      blog: { ...updatedBlog, id }
+      blog: {
+        ...updatedBlog,
+        tags: updatedBlog.tags ? JSON.parse(updatedBlog.tags) : []
+      }
     });
   } catch (error) {
     console.error('Blog update error:', error);
@@ -139,16 +193,25 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
-    if (!id) {
+    if (!id || !Number.isInteger(Number(id))) {
       return NextResponse.json(
-        { error: 'Blog ID is required' },
+        { error: 'Valid blog ID is required' },
         { status: 400 }
       );
     }
 
-    // Delete blog from Firestore
-    const blogRef = doc(db, 'blogs', id);
-    await deleteDoc(blogRef);
+    // Delete blog from database
+    const result = await db
+      .delete(blogs)
+      .where(eq(blogs.id, Number(id)))
+      .returning();
+
+    if (result.length === 0) {
+      return NextResponse.json(
+        { error: 'Blog post not found' },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       message: 'Blog post deleted successfully'

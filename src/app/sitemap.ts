@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
-import { db } from '@/lib/firebase'
-import { collection, getDocs, query, orderBy } from 'firebase/firestore'
+import { db, blogs } from '@/lib/db'
+import { desc } from 'drizzle-orm'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://genuinepracticalhomoeopathy.com'
@@ -23,11 +23,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Dynamic routes (blogs)
     let blogRoutes: MetadataRoute.Sitemap = []
     try {
-        const blogsQuery = query(collection(db, 'blogs'), orderBy('publishedAt', 'desc'));
-        const snapshot = await getDocs(blogsQuery);
-        blogRoutes = snapshot.docs.map(doc => ({
-            url: `${baseUrl}/blogs/${doc.id}`,
-            lastModified: new Date(doc.data().publishedAt || new Date()),
+        const allBlogs = await db
+            .select({ id: blogs.id, publishedAt: blogs.publishedAt })
+            .from(blogs)
+            .orderBy(desc(blogs.publishedAt));
+        
+        blogRoutes = allBlogs.map(blog => ({
+            url: `${baseUrl}/blogs/${blog.id}`,
+            lastModified: blog.publishedAt ? new Date(blog.publishedAt) : new Date(),
             changeFrequency: 'weekly' as const,
             priority: 0.7
         }))
