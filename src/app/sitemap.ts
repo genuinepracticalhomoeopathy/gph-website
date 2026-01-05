@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             .select({ id: blogs.id, publishedAt: blogs.publishedAt })
             .from(blogs)
             .orderBy(desc(blogs.publishedAt));
-        
+
         blogRoutes = allBlogs.map(blog => ({
             url: `${baseUrl}/blogs/${blog.id}`,
             lastModified: blog.publishedAt ? new Date(blog.publishedAt) : new Date(),

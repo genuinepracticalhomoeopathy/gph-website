@@ -44,11 +44,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Prepare blog data for database
-    const tagsString = Array.isArray(blogData.tags) 
+    const tagsString = Array.isArray(blogData.tags)
       ? JSON.stringify(blogData.tags)
       : typeof blogData.tags === 'string'
-      ? JSON.stringify(blogData.tags.split(',').map(tag => tag.trim()).filter(Boolean))
-      : null;
+        ? JSON.stringify(blogData.tags.split(',').map(tag => tag.trim()).filter(Boolean))
+        : null;
 
     const newBlog: NewBlog = {
       title: blogData.title,
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Blog creation error:', error);
-    
+
     if (error instanceof Error) {
       if (error.message.includes('database') || error.message.includes('connection')) {
         return NextResponse.json(
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-    
+
     return NextResponse.json(
       { error: 'Failed to create blog post. Check console for details.' },
       { status: 500 }
@@ -133,11 +133,11 @@ export async function PUT(request: NextRequest) {
     }
 
     // Prepare updated blog data
-    const tagsString = Array.isArray(blogData.tags) 
+    const tagsString = Array.isArray(blogData.tags)
       ? JSON.stringify(blogData.tags)
       : typeof blogData.tags === 'string'
-      ? JSON.stringify(blogData.tags.split(',').map(tag => tag.trim()).filter(Boolean))
-      : null;
+        ? JSON.stringify(blogData.tags.split(',').map(tag => tag.trim()).filter(Boolean))
+        : null;
 
     const updatedData = {
       title: blogData.title,

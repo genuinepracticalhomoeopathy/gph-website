@@ -68,7 +68,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         {children}
-        <Analytics/>
+        <Analytics />
         <Footer />
       </body>
     </html>
